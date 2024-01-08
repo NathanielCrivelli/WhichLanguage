@@ -21,10 +21,27 @@ const textFreqency = function(text) {
             ranking[text.charAt(i)] = 1;
         }
     }
+    return ranking
 }
 
 const removeCapsAndWhiteSpace = function(text) {
-    
+    let textFixed = text.toLowerCase();
+    let noSpace = textFixed.split(" ").join('');
+    let noNL = noSpace.split("\n").join('');
+    let noDash = noNL.split("-").join('');
+    let noHyphon = noDash.split("’").join('');
+    let noPeriod = noHyphon.split(".").join('');
+    let noComma = noPeriod.split(",").join("");
+    let noParaen = noComma.split("(").join("");
+    let noRPara = noParaen.split(")").join("");
+    let noLQuote = noRPara.split("“").join("");
+    let noRQuote = noLQuote.split("”").join("");
+
+    const stringWithoutNumbers = noRQuote.split('').filter(char => isNaN(char)).join('');
+
+    return stringWithoutNumbers;
 }
 
-console.log(frequency[15]);
+// console.log(frequency[15]);
+// console.log(removeCapsAndWhiteSpace(sample));
+console.log(textFreqency(removeCapsAndWhiteSpace(sample)));
