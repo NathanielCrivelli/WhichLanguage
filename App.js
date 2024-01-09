@@ -15,12 +15,18 @@ let ranking = new Map();
 const textFreqency = function(text) {
     const len = text.length;
     for (let i = 0; i < len; i++) {
-        if (text.charAt(i) in ranking) {
-            ranking[text.charAt(i)]++
+        if (ranking.has(text.charAt(i))) {
+            ranking.set(text.charAt(i), ranking.get(text.charAt(i))+1)
         } else {
-            ranking[text.charAt(i)] = 1;
+            ranking.set(text.charAt(i), 1)
         }
     }
+    let array = [...ranking.keys()];
+    console.log(array);
+    for (let i = 0; i < array.length; i++) {
+        ranking.set(array[i], (ranking.get(array[i])/len)*100)
+    }
+    
     return ranking
 }
 
@@ -29,19 +35,25 @@ const removeCapsAndWhiteSpace = function(text) {
     let noSpace = textFixed.split(" ").join('');
     let noNL = noSpace.split("\n").join('');
     let noDash = noNL.split("-").join('');
-    let noHyphon = noDash.split("’").join('');
+    let noHyphon = noDash.split("‘").join('');
     let noPeriod = noHyphon.split(".").join('');
     let noComma = noPeriod.split(",").join("");
     let noParaen = noComma.split("(").join("");
     let noRPara = noParaen.split(")").join("");
     let noLQuote = noRPara.split("“").join("");
     let noRQuote = noLQuote.split("”").join("");
+    let noAnd = noRQuote.split("&").join("");
+    let noBracket = noAnd.split("[").join("");
+    let noRBracket = noBracket.split("]").join("");
+    let noDots = noRBracket.split("…").join("");
+    let noSlash = noDots.split("’").join("");
 
-    const stringWithoutNumbers = noRQuote.split('').filter(char => isNaN(char)).join('');
+    const stringWithoutNumbers = noSlash.split('').filter(char => isNaN(char)).join('');
 
     return stringWithoutNumbers;
 }
 
 // console.log(frequency[15]);
 // console.log(removeCapsAndWhiteSpace(sample));
+console.log(removeCapsAndWhiteSpace(sample).length)
 console.log(textFreqency(removeCapsAndWhiteSpace(sample)));
