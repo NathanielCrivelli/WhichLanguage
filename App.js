@@ -1,16 +1,23 @@
 const fs = require("fs");
 const frequency = JSON.parse(fs.readFileSync("./letterFrequency.json", "utf-8"));
-const sample = fs.readFileSync("./text.txt", "utf-8");
+const sample = fs.readFileSync("./spanish.txt", "utf-8");
 let ranking = new Map();
+let chiRank = new Map();
 
-// const chisquare = function() {
-//     let chiNum = 0;
-//     for (let i = 0; i < 17; i++) {
+const chisquare = function() {
+    let array = [...ranking.keys()];
+    for (let lang = 0; lang < 16; lang++) {
+        let chiNum = 0;
+        for (let letter = 0; letter < array.length; letter++) {
+            let currentLetter = (ranking.get(array[letter]) - frequency[lang][array[letter]]) ** 2;
+            currentLetter /= ranking.get(array[letter]);
+            chiNum += currentLetter;
+        }
+        chiRank.set(frequency[lang]["Language"], chiNum);
+    }
 
-//     }
-// }
-
-
+    return chiRank;
+}
 
 const textFreqency = function(text) {
     const len = text.length;
@@ -21,13 +28,13 @@ const textFreqency = function(text) {
             ranking.set(text.charAt(i), 1)
         }
     }
+
     let array = [...ranking.keys()];
-    console.log(array);
     for (let i = 0; i < array.length; i++) {
         ranking.set(array[i], (ranking.get(array[i])/len)*100)
     }
     
-    return ranking
+    return ranking //may cause problems
 }
 
 const removeCapsAndWhiteSpace = function(text) {
@@ -47,8 +54,9 @@ const removeCapsAndWhiteSpace = function(text) {
     let noRBracket = noBracket.split("]").join("");
     let noDots = noRBracket.split("…").join("");
     let noSlash = noDots.split("’").join("");
+    let noQuote2 = noSlash.split("\"").join("");
 
-    const stringWithoutNumbers = noSlash.split('').filter(char => isNaN(char)).join('');
+    const stringWithoutNumbers = noQuote2.split('').filter(char => isNaN(char)).join('');
 
     return stringWithoutNumbers;
 }
@@ -57,3 +65,4 @@ const removeCapsAndWhiteSpace = function(text) {
 // console.log(removeCapsAndWhiteSpace(sample));
 console.log(removeCapsAndWhiteSpace(sample).length)
 console.log(textFreqency(removeCapsAndWhiteSpace(sample)));
+console.log(chisquare());
