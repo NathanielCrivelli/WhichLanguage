@@ -1,17 +1,25 @@
 const fs = require("fs");
 const frequency = JSON.parse(fs.readFileSync("./letterFrequency.json", "utf-8"));
-const sample = fs.readFileSync("./spanish.txt", "utf-8");
+const sample = fs.readFileSync("./text.txt", "utf-8");
 let ranking = new Map();
 let chiRank = new Map();
+let letterArray = Object.keys(frequency[0])
 
 const chisquare = function() {
-    let array = [...ranking.keys()];
     for (let lang = 0; lang < 16; lang++) {
         let chiNum = 0;
-        for (let letter = 0; letter < array.length; letter++) {
-            let currentLetter = (ranking.get(array[letter]) - frequency[lang][array[letter]]) ** 2;
-            currentLetter /= ranking.get(array[letter]);
-            chiNum += currentLetter;
+        for (let letter = 1; letter < letterArray.length; letter++) {
+            if (!ranking.has(letterArray[letter])) {
+                if (frequency[lang][letterArray[letter]] != 0) {
+                    let currentLetter = (0 - frequency[lang][letterArray[letter]]) ** 2;
+                    currentLetter /= frequency[lang][letterArray[letter]];
+                    chiNum += currentLetter;
+                }
+            } else {
+                let currentLetter = (ranking.get(letterArray[letter]) - frequency[lang][letterArray[letter]]) ** 2;
+                currentLetter /= frequency[lang][letterArray[letter]];
+                chiNum += currentLetter;
+            }
         }
         chiRank.set(frequency[lang]["Language"], chiNum);
     }
